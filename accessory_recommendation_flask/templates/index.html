@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>飾品推薦小幫手</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            background: #fdfdfd;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-group-item:hover {
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        #productList img {
+            border: 2px solid #eee;
+            transition: transform 0.2s ease;
+        }
+
+        #productList img:hover {
+            transform: scale(1.05);
+            border-color: #ccc;
+        }
+
+        /* 推薦結果卡片 */
+        #rec-card {
+            background-color: #fdfdfd;
+            border-radius: 1rem;
+            transition: box-shadow 0.3s ease;
+            border: none;
+            padding: 1rem;
+        }
+
+        #rec-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 標題一致風格 */
+        #rec-card .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* 內文 */
+        #rec-card .card-text {
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 0.5rem;
+        }
+    </style>
+    <script>
+        async function fetchRecommendation() {
+            const response = await fetch("/latest");
+            const data = await response.json();
+
+            if (data.recommendation) {
+                document.getElementById("rec").innerText = data.recommendation;
+
+                if (data.color && data.style && data.hairstyle) {
+                    document.getElementById("color").innerText = data.color;
+                    document.getElementById("style").innerText = data.style;
+                    document.getElementById("hairstyle").innerText = data.hairstyle;
+                    document.getElementById("infoSection").style.display = "block";
+                }
+
+                const list = document.getElementById("productList");
+                list.innerHTML = "";
+                data.products.forEach(p => {
+                    const li = document.createElement("li");
+                    li.className = "list-group-item d-flex align-items-center gap-3 py-3 border-0 border-bottom";
+
+                    // 取得圖片路徑
+                    const type = p.id[0] === "N" ? "necklace" : "earrings";
+                    const color = p.id[1] === "G" ? "gold" : "silver";
+                    const imagePath = `/static/image/${type}/${color}/${p.id}.jpg`;
+
+                    const img = document.createElement("img");
+                    img.src = imagePath;
+                    img.alt = p.name;
+                    img.style.width = "80px";
+                    img.style.height = "80px";
+                    img.style.objectFit = "cover";
+                    img.className = "me-3 rounded";
+
+                    const textDiv = document.createElement("div");
+                    textDiv.innerHTML = `<strong>${p.name}</strong><br>標籤：${p.tags.join(", ")}`;
+
+                    li.appendChild(img);
+                    li.appendChild(textDiv);
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        setInterval(fetchRecommendation, 3000);
+    </script>
+</head>
+
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-primary">飾品推薦小幫手 💎</h1>
+            <p class="text-muted">根據你的穿搭風格，推薦最適合的飾品！</p>
+        </div>
+
+        <div id="infoSection" class="mb-4" style="display: none;">
+            <div class="alert alert-info">
+                <strong>你的穿搭：</strong>
+                <span class="badge bg-secondary" id="color">??</span>
+                <span class="badge bg-secondary" id="style">??</span>
+                <span class="badge bg-secondary" id="hairstyle">??</span>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 rounded-4">
+            <div class="card-body">
+                <h5 class="card-title fw-bold fs-4 mb-4">推薦結果</h5>
+                <p class="card-text" id="rec">載入推薦中...</p>
+            </div>
+        </div>
+
+
+        <div class="card shadow-sm rounded-4 ">
+            <div class="card-body">
+                <h5 class="card-title fw-bold fs-4 mb-4">推薦飾品</h5>
+                <ul class="list-group list-group-flush" id="productList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>飾品推薦系統</title>
+</head>
+
+<body>
+    <h2>輸入穿搭資訊：</h2>
+    <form method="post">
+        顏色：<input type="text" name="color"><br>
+        風格：<input type="text" name="style"><br>
+        髮型：<input type="text" name="hairstyle"><br>
+        <button type="submit">送出推薦</button>
+    </form>
+
+    {% if recommendation %}
+    <h3>LLM 回應：</h3>
+    <p>{{ recommendation }}</p>
+
+    <h3>推薦商品：</h3>
+    <ul>
+        {% for p in products %}
+        <li>{{ p.id }} - {{ p.name }}（{{ p.tags | join(", ") }}）</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+
+</html>
