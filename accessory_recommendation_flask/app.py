@@ -70,23 +70,36 @@ def index():
 
 @app.route("/receive", methods=["POST"])
 def receive_from_camera():
-    data = request.get_json()
+    try:
+        # 嘗試以 JSON 格式接收資料
+        data = request.get_json(force=True)
+        print("收到 JSON:", data)
+    except Exception as e:
+        print("無法解析 JSON:", str(e))
+        return jsonify({"error": f"無法解析 JSON: {str(e)}"}), 400
+
+    if not data:
+        return jsonify({"error": "沒有收到任何 JSON 資料"}), 400
+
     color = data.get("color")
     style = data.get("style")
     hairstyle = data.get("hairstyle")
 
-    if not all([color, style, hairstyle]):
-        return jsonify({"error": "缺少參數"}), 400
+    # 只要有一個值就繼續跑：
+    if not any([color, style, hairstyle]):
+        return jsonify({"error": "至少需要一個參數"}), 400
 
+    # 呼叫 LLM 推薦函式（需已定義）
     recommendation = get_llm_recommendation(color, style, hairstyle)
     if "error_detail" in recommendation:
         return jsonify({"error": recommendation["error_detail"]}), 400
 
     description = recommendation.get("description", "沒有推薦的描述")
+    # 比對推薦商品
     matched_products = find_matching_products(
         recommendation.get("items", []), products_data
     )
-
+    # 更新最新資料（需已定義 latest_data）
     latest_data.update(
         {
             "recommendation": description,
@@ -97,7 +110,7 @@ def receive_from_camera():
         }
     )
 
-    return jsonify({"status": "success"})
+    return jsonify({"status": "success", "received": data})
 
 
 # 此 API 提供前端輪詢取得最新推薦結果與對應商品，避免重複查詢。
@@ -107,6 +120,28 @@ def get_latest():
         json.dumps(latest_data, ensure_ascii=False),
         content_type="application/json; charset=utf-8",
     )
+
+
+@app.route("/resume-detection", methods=["POST"])
+def resume_detection():
+    hub8735_ip = os.getenv("HUB8735_ip")  # 建議寫入 .env，如172.20.10.7
+    url = f"http://{hub8735_ip}/resume"
+    try:
+        print(f"Connecting to {url}")
+        resp = requests.get(url, timeout=5)
+        print(f"Response status: {resp.status_code}")
+        if resp.status_code == 200:
+            return jsonify({"status": "success", "message": "偵測已恢復"})
+        else:
+            return (
+                jsonify(
+                    {"status": "fail", "message": f"HUB8735 回應失敗: {resp.text}"}
+                ),
+                500,
+            )
+    except Exception as e:
+        print(f"Exception occurred: {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.errorhandler(500)
@@ -126,4 +161,6 @@ def internal_error(error):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(
+        host="0.0.0.0", port=8000, debug=True
+    )  # Flask Server 監聽所有網卡 IP、自動列出錯誤堆疊，方便 debug。
