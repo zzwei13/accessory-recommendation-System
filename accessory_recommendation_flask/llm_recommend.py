@@ -1,9 +1,12 @@
 import requests
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
 # 載入 .env
-load_dotenv()
+# 指定專案根目錄下的 .env
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=env_path)
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 TOGETHER_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"  # 或 "mistral-7b-instruct"
 TOGETHER_API_URL = (
