@@ -11,33 +11,18 @@ import requests
 import json
 from utils.product_db import load_products, find_matching_products
 from utils.llm_helper import get_llm_recommendation
+from pathlib import Path
 
-load_dotenv()
+
+# 指定專案根目錄下的 .env
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=env_path)
 app = Flask(__name__)
 # 一次性讀入產品資料
 products_data = load_products()
 
 # 暫存最新推薦結果與商品
 latest_data = {"recommendation": "", "products": []}
-
-
-# 關鍵字詞庫
-KEYWORDS = [
-    "可愛",
-    "個性潮流",
-    "氣質",
-    "幾何",
-    "俏皮",
-    "華麗",
-    "優雅氣質",
-    "個性",
-    "甜美",
-    "簡約",
-]
-
-
-def extract_keywords(text):
-    return [kw for kw in KEYWORDS if kw in text]
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -122,6 +107,16 @@ def get_latest():
     )
 
 
+# 清除資料 : 重置全域變數 latest_data 為空狀態。
+@app.route("/clear-cache", methods=["POST"])
+def clear_cache():
+    global latest_data
+    latest_data = {"recommendation": "", "products": []}
+    return jsonify({"status": "success", "message": "快取已清除"})
+
+
+# 前端呼叫Flask /resume-detection，Flask 再轉發請求給設備
+# 呼叫設備的 /resume，讓設備回到「偵測狀態」。
 @app.route("/resume-detection", methods=["POST"])
 def resume_detection():
     hub8735_ip = os.getenv("HUB8735_ip")  # 建議寫入 .env，如172.20.10.7
