@@ -4,9 +4,12 @@ import os
 import requests
 import json
 from dotenv import load_dotenv
+from pathlib import Path
 
-# 載入 .env 檔案
-load_dotenv()
+
+# 找到上層資料夾（accessory_recommendation_flask）裡的 .env 檔案
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 TOGETHER_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"  # "mistralai/Mixtral-8x7B-Instruct-v0.1"
