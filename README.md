@@ -47,17 +47,18 @@ Together AI 模型生成建議
 ## 執行方式
 
 1. 安裝依賴套件
-ˋˋˋmarkdown
+```bash
 pip install -r requirements.txt
-ˋˋˋ
+```
 2. 確保兩端在同一區域網路下
 3. .env 設定與使用
-ˋˋˋenv
+請在專案根目錄建立 .env 檔案並填入以下資訊：
+```env
 TOGETHER_API_KEY = ""  # 金鑰
 HUB8735_ip=
-ˋˋˋ
+```
 4. 執行伺服器（Flask 後端）
-ˋˋˋ
+```bash
 python app.py
-ˋˋˋ
+```
 5. 於裝置（例如手機）在同 WiFi 下打開 http://<電腦IP>:8000即可使用系統。
