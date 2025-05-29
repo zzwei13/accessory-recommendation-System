@@ -18,7 +18,7 @@ def load_products():
 def find_matching_products(items: list, products: list, top_k: int = 3) -> list:
     """
     根據 LLM 回傳的推薦項目，找出最相符的產品。
-    將推薦項目的 type、color、style 與產品的 tags 比對，計算交集數量作為匹配分數。
+    將推薦項目的 type、style 與產品的 tags 比對，計算交集數量作為匹配分數。
     """
     scores = []
 
@@ -27,11 +27,10 @@ def find_matching_products(items: list, products: list, top_k: int = 3) -> list:
         score = 0
 
         for item in items:
-            # 收集推薦項目的 type, color, style，轉成小寫集合
+            # 收集推薦項目的 type, style，轉成小寫集合
             item_tags = set(
                 [
                     item.get("type", "").lower(),
-                    item.get("color", "").lower(),
                     item.get("style", "").lower(),
                 ]
             )

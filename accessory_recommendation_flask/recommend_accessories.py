@@ -1,13 +1,5 @@
-def recommend_accessories(color: str, style: str, hairstyle: str) -> str:
+def recommend_accessories(style: str, hairstyle: str) -> str:
     accessories = []
-
-    # 顏色對應推薦
-    if color in ["藍", "灰", "綠", "冷色系"]:
-        accessories.append("銀色飾品（如銀項鍊、銀耳環）")
-    elif color in ["紅", "橘", "米", "暖色系"]:
-        accessories.append("金色飾品（如鍍金手環、金戒指）")
-    elif color in ["黑", "白", "中性色", "黑白灰"]:
-        accessories.append("中性色飾品（依風格或髮型調整）")
 
     # 穿搭風格對應推薦
     if style == "正式":
@@ -34,11 +26,10 @@ def recommend_accessories(color: str, style: str, hairstyle: str) -> str:
 
 if __name__ == "__main__":
     # 假設這些是 AI 辨識後的輸出
-    wear_color = "藍"
     wear_style = "正式"
     hair_style = "短髮"
 
-    result = recommend_accessories(wear_color, wear_style, hair_style)
+    result = recommend_accessories(wear_style, hair_style)
     print(result)
 
 

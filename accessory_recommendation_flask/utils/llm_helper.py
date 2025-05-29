@@ -16,7 +16,7 @@ TOGETHER_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"  # "mistralai/Mi
 TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
 
 
-def get_llm_recommendation(color: str, style: str, hairstyle: str) -> str:
+def get_llm_recommendation(style: str, hairstyle: str) -> str:
     system_prompt = (
         "你是一位時尚飾品顧問，根據使用者的穿搭顏色、風格與髮型，"
         "請推薦適合的飾品種類（如項鍊、耳環等）、顏色（金色、銀色等）與風格（甜美、個性、優雅、簡約、華麗），"
@@ -25,13 +25,13 @@ def get_llm_recommendation(color: str, style: str, hairstyle: str) -> str:
         "{\n"
         '  "description": "自然語言推薦說明，請用繁體中文",\n'
         '  "items": [\n'
-        '    {"type": , "color": , "style": },\n'
-        '    {"type": , "color": , "style": }\n'
+        '    {"type": , "style": },\n'
+        '    {"type": , "style": }\n'
         "  ]\n"
         "}"
     )
 
-    user_prompt = f"穿搭顏色是「{color}」，風格是「{style}」，髮型是「{hairstyle}」。"
+    user_prompt = f"風格是「{style}」，髮型是「{hairstyle}」。"
 
     headers = {
         "Authorization": f"Bearer {TOGETHER_API_KEY}",
@@ -77,8 +77,8 @@ def get_llm_recommendation(color: str, style: str, hairstyle: str) -> str:
 {
   "description": "以甜美風格搭配白色穿搭及長髮，可選擇金色小巧耳環與珍珠項鍊，展現優雅與柔和氣質。",
   "items": [
-    {"type": "耳環", "color": "金色", "style": "甜美"},
-    {"type": "項鍊", "color": "珍珠白", "style": "優雅"}
+    {"type": "耳環", "style": "甜美"},
+    {"type": "項鍊", "style": "優雅"}
   ]
 }
 

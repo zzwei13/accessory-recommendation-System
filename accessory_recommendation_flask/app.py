@@ -32,12 +32,11 @@ def index():
     matched_products = []
 
     if request.method == "POST":
-        color = request.form.get("color")
         style = request.form.get("style")
         hairstyle = request.form.get("hairstyle")
 
         # 呼叫 LLM 模型取得推薦
-        recommendation = get_llm_recommendation(color, style, hairstyle)
+        recommendation = get_llm_recommendation(style, hairstyle)
 
         if "error_detail" in recommendation:
             return jsonify({"error": recommendation["error_detail"]}), 400
@@ -66,16 +65,15 @@ def receive_from_camera():
     if not data:
         return jsonify({"error": "沒有收到任何 JSON 資料"}), 400
 
-    color = data.get("color")
     style = data.get("style")
     hairstyle = data.get("hairstyle")
 
     # 只要有一個值就繼續跑：
-    if not any([color, style, hairstyle]):
+    if not any([style, hairstyle]):
         return jsonify({"error": "至少需要一個參數"}), 400
 
     # 呼叫 LLM 推薦函式（需已定義）
-    recommendation = get_llm_recommendation(color, style, hairstyle)
+    recommendation = get_llm_recommendation(style, hairstyle)
     if "error_detail" in recommendation:
         return jsonify({"error": recommendation["error_detail"]}), 400
 
@@ -89,7 +87,6 @@ def receive_from_camera():
         {
             "recommendation": description,
             "products": matched_products,
-            "color": color,
             "style": style,
             "hairstyle": hairstyle,
         }
