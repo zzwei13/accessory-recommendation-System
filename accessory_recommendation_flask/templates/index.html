@@ -129,6 +129,7 @@
                         document.getElementById("modalImage").src = imagePath;
                         document.getElementById("modalTitle").innerText = p.name;
                         document.getElementById("modalTags").innerText = "標籤：" + p.tags.join(", ");
+                        document.getElementById("modalId").innerText = "產品編號：" + p.id;
                         const myModal = new bootstrap.Modal(document.getElementById('imageModal'));
                         myModal.show();
                     };
@@ -279,6 +280,7 @@
                 <div class="modal-body text-center">
                     <img id="modalImage" src="" alt="" class="img-fluid rounded mb-3" style="max-height: 400px;">
                     <h5 id="modalTitle" class="fw-bold"></h5>
+                    <p id="modalId" class="text-muted mb-1"></p>
                     <p id="modalTags" class="text-muted"></p>
                 </div>
             </div>

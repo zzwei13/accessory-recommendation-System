@@ -112,10 +112,12 @@ def clear_cache():
     return jsonify({"status": "success", "message": "快取已清除"})
 
 
-# 前端呼叫Flask /resume-detection，Flask 再轉發請求給設備
-# 呼叫設備的 /resume，讓設備回到「偵測狀態」。
 @app.route("/resume-detection", methods=["POST"])
 def resume_detection():
+    """
+    將前端請求轉發給 Hub8735 裝置的 /resume endpoint，
+    用來喚醒設備進入偵測狀態。
+    """
     hub8735_ip = os.getenv("HUB8735_ip")  # 建議寫入 .env，如172.20.10.7
     url = f"http://{hub8735_ip}/resume"
     try:
@@ -123,7 +125,7 @@ def resume_detection():
         resp = requests.get(url, timeout=5)
         print(f"Response status: {resp.status_code}")
         if resp.status_code == 200:
-            return jsonify({"status": "success", "message": "偵測已恢復"})
+            return jsonify({"status": "success", "message": "開始偵測"})
         else:
             return (
                 jsonify(

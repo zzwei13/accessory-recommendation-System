@@ -18,24 +18,45 @@ def load_products():
 def find_matching_products(items: list, products: list, top_k: int = 3) -> list:
     """
     根據 LLM 回傳的推薦項目，找出最相符的產品。
-    將推薦項目的 type、style 與產品的 tags 比對，計算交集數量作為匹配分數。
+    將推薦項目的 type、style、color 與產品的 tags 比對，計算交集數量作為匹配分數。
+    - type: 2分
+    - style: 1分
+    - color: 1分
     """
+    # 權重設定
+    weights = {
+        "type": 2,
+        "style": 1,
+        "color": 1,
+    }
+
     scores = []
 
     for product in products:
         product_tags = set(tag.lower() for tag in product.get("tags", []))
         score = 0
-
+        """
         for item in items:
-            # 收集推薦項目的 type, style，轉成小寫集合
+            #  收集推薦項目的 type, style, color，轉成小寫集合
             item_tags = set(
                 [
                     item.get("type", "").lower(),
                     item.get("style", "").lower(),
+                    item.get("color", "").lower(),
                 ]
             )
             # 對應的交集數量即為分數
             score += len(product_tags & item_tags)
+
+        scores.append((score, product))
+        """
+
+        for item in items:
+            # 分別比對每個欄位是否出現在 tags 中，若有則加相對權重
+            for key in ["type", "style", "color"]:
+                value = item.get(key, "").lower()
+                if value and value in product_tags:
+                    score += weights.get(key, 0)
 
         scores.append((score, product))
 

@@ -18,15 +18,20 @@ TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
 
 def get_llm_recommendation(style: str, hairstyle: str) -> str:
     system_prompt = (
-        "你是一位時尚飾品顧問，根據使用者的穿搭顏色、風格與髮型，"
-        "請推薦適合的飾品種類（如項鍊、耳環等）、顏色（金色、銀色等）與風格（甜美、個性、優雅、簡約、華麗），"
-        "並簡要說明搭配理由。"
-        "請以以下 JSON 格式回覆，不要有多餘文字：\n\n"
+        "你是一位時尚飾品顧問，請根據使用者的穿搭風格與髮型，推薦適合的飾品。\n\n"
+        "請依照以下規則操作：\n"
+        "1. 飾品建議須包含：\n"
+        "   - 種類（例如：項鍊、耳環、戒指、手鍊）\n"
+        "   - 顏色（金色、銀色）\n"
+        "   - 風格（可愛、俏皮、甜美、個性、幾何、優雅、簡約、華麗）\n"
+        "2. 請簡要說明搭配理由（用繁體中文）\n"
+        "3. 若 style 或 hairstyle 缺失，請給出通用搭配建議，以簡約、百搭為主\n"
+        "4. 僅使用以下 JSON 格式回覆，不要有多餘文字：\n\n"
         "{\n"
         '  "description": "自然語言推薦說明，請用繁體中文",\n'
         '  "items": [\n'
-        '    {"type": , "style": },\n'
-        '    {"type": , "style": }\n'
+        '    {"type": "飾品種類", "style": "風格", "color": "顏色"},\n'
+        '    {"type": "飾品種類", "style": "風格", "color": "顏色"}\n'
         "  ]\n"
         "}"
     )
@@ -77,8 +82,8 @@ def get_llm_recommendation(style: str, hairstyle: str) -> str:
 {
   "description": "以甜美風格搭配白色穿搭及長髮，可選擇金色小巧耳環與珍珠項鍊，展現優雅與柔和氣質。",
   "items": [
-    {"type": "耳環", "style": "甜美"},
-    {"type": "項鍊", "style": "優雅"}
+    {"type": "耳環", "style": "簡約", "color": "銀色"},
+    {"type": "項鍊", "style": "優雅", "color": "玫瑰金"}
   ]
 }
 
